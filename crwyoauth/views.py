@@ -3,18 +3,20 @@ import urllib
 import urllib2
 import json
 import re
-
-from accounts.models import AccountUser
+from django.conf import settings
+from django.apps import apps
 from django.views.generic.base import RedirectView
 from django.contrib.auth import authenticate, login
-from .models import CrwyOauthConfig
+from .models import CrwyoauthConfig
 
 # Create your views here.
+
+User = apps.get_model(settings.AUTH_USER_MODEL)
 
 
 def get_oath_config(oauth_to):
     res = {}
-    config = CrwyOauthConfig.objects.get(oauth_to=oauth_to)
+    config = CrwyoauthConfig.objects.get(oauth_to=oauth_to)
     res['CLIENT_ID'] = config.client_id
     res['CLIENT_SECRET'] = config.client_secret
     res['CALL_BACK'] = config.call_back
@@ -54,9 +56,9 @@ class GithubOauthView(RedirectView):
         email = str(data['id']) + '@github-oauth.com'
         password = '********'
         try:
-            user = AccountUser.objects.get(username=username)
+            user = User.objects.get(username=username)
         except:
-            user = AccountUser.objects.create_user(username, email, password)
+            user = User.objects.create_user(username, email, password)
             user.nickname = nickname
             user.head_oauth_avatar = head_oauth_avatar
             user.save()
@@ -108,9 +110,9 @@ class SinaOauthView(RedirectView):
         email = str(uid) + '@sina-oauth.com'
         password = '********'
         try:
-            user = AccountUser.objects.get(username=username)
+            user = User.objects.get(username=username)
         except:
-            user = AccountUser.objects.create_user(username, email, password)
+            user = User.objects.create_user(username, email, password)
             user.nickname = nickname
             user.head_oauth_avatar = head_oauth_avatar
             user.save()
@@ -186,9 +188,9 @@ class TencentOauthView(RedirectView):
         email = str(openid) + '@qq-oauth.com'
         password = '********'
         try:
-            user = AccountUser.objects.get(username=username)
+            user = User.objects.get(username=username)
         except:
-            user = AccountUser.objects.create_user(username, email, password)
+            user = User.objects.create_user(username, email, password)
             user.nickname = nickname
             user.head_oauth_avatar = head_oauth_avatar
             user.save()
