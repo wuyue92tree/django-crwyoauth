@@ -22,7 +22,7 @@ from .models import CrwyoauthConfig
 User = apps.get_model(settings.AUTH_USER_MODEL)
 
 
-def get_oath_config(oauth_to):
+def get_oauth_config(oauth_to):
     res = {}
     config = CrwyoauthConfig.objects.get(oauth_to=oauth_to)
     res['CLIENT_ID'] = config.client_id
@@ -37,7 +37,7 @@ class GithubOauthView(RedirectView):
 
     def get_access_token(self):
         code = self.request.GET.get('code')
-        res = get_oath_config('GITHUB')
+        res = get_oauth_config('GITHUB')
         url = 'https://github.com/login/oauth/access_token'
         data = {
             'grant_type': 'authorization_code',
@@ -46,7 +46,6 @@ class GithubOauthView(RedirectView):
             'code': code,
             'redirect_uri': res.get('CALL_BACK'),
         }
-        data = urllib.urlencode(data)
         res = requests.post(url, data, headers={'Accept': 'application/json'})
         result = json.loads(res.content)
         return result
@@ -87,7 +86,7 @@ class SinaOauthView(RedirectView):
 
     def get_access_token(self):
         code = self.request.GET.get('code')
-        res = get_oath_config('SINA')
+        res = get_oauth_config('SINA')
         url = 'https://api.weibo.com/oauth2/access_token'
         data = {
             'grant_type': 'authorization_code',
@@ -96,7 +95,6 @@ class SinaOauthView(RedirectView):
             'code': code,
             'redirect_uri': res.get('CALL_BACK'),
         }
-        data = urllib.urlencode(data)
         res = requests.post(url, data, headers={'Accept': 'application/json'})
         result = json.loads(res.content)
         return result
@@ -147,7 +145,7 @@ class TencentOauthView(RedirectView):
     def get_access_token(self):
         # 获取access_token
         code = self.request.GET.get('code')
-        res = get_oath_config('QQ')
+        res = get_oauth_config('QQ')
         url = 'https://graph.qq.com/oauth2.0/token'
         data = {
             'grant_type': 'authorization_code',
@@ -156,7 +154,6 @@ class TencentOauthView(RedirectView):
             'code': code,
             'redirect_uri': res.get('CALL_BACK'),
         }
-        data = urllib.urlencode(data)
         res = requests.post(url, data, headers={'Accept': 'application/json'})
         tmp = res.content
         result = {}
@@ -203,7 +200,7 @@ class TencentOauthView(RedirectView):
             access_token = access_token_info['access_token']
             openid_info = self.get_openid(access_token)
             openid = openid_info['openid']
-            oauth_consumer_key = get_oath_config('QQ').get('CLIENT_ID')
+            oauth_consumer_key = get_oauth_config('QQ').get('CLIENT_ID')
             self.get_user_info(access_token, oauth_consumer_key, openid)
         except ImportError:
             pass
