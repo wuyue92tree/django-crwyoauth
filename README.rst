@@ -8,7 +8,7 @@ django oauth 2.0 实现。
 运行环境
 ===================
 
- * Python2.7
+ * Python2.7 && Python3.6
  * Django
  * Works on Linux, Mac OSX
 
@@ -16,6 +16,7 @@ django oauth 2.0 实现。
 ===================
  * Django >= 1.10.3
  * django-braces >= 1.9.0
+ * requests==2.18.4
 
 安装
 ===================

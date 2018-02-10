@@ -1,6 +1,14 @@
 # encoding=utf-8
-import urllib
-import urllib2
+
+import sys
+
+if sys.version_info.major > 2:
+    import urllib.parse as urllib
+    import requests
+else:
+    import urllib
+    import requests
+
 import json
 import re
 from django.conf import settings
@@ -39,17 +47,14 @@ class GithubOauthView(RedirectView):
             'redirect_uri': res.get('CALL_BACK'),
         }
         data = urllib.urlencode(data)
-        req = urllib2.Request(url, data, headers={'Accept': 'application/json'})
-        response = urllib2.urlopen(req)
-        result = response.read()
-        result = json.loads(result)
+        res = requests.post(url, data, headers={'Accept': 'application/json'})
+        result = json.loads(res.content)
         return result
 
     def get_user_info(self, access_token):
         url = 'https://api.github.com/user?access_token=%s' % access_token
-        response = urllib2.urlopen(url)
-        html = response.read()
-        data = json.loads(html)
+        res = requests.get(url)
+        data = json.loads(res.content)
         username = str(data['id']) + '-github_oauth'
         nickname = data['login']
         head_oauth_avatar = data['avatar_url']
@@ -92,18 +97,15 @@ class SinaOauthView(RedirectView):
             'redirect_uri': res.get('CALL_BACK'),
         }
         data = urllib.urlencode(data)
-        req = urllib2.Request(url, data, headers={'Accept': 'application/json'})
-        response = urllib2.urlopen(req)
-        result = response.read()
-        result = json.loads(result)
+        res = requests.post(url, data, headers={'Accept': 'application/json'})
+        result = json.loads(res.content)
         return result
 
     def get_user_info(self, access_token, uid):
         # 获取对应uid用户信息
         url = 'https://api.weibo.com/2/users/show.json?access_token=%s&uid=%s' % (access_token, uid)
-        response = urllib2.urlopen(url)
-        html = response.read()
-        data = json.loads(html)
+        res = requests.get(url)
+        data = json.loads(res.content)
         username = str(uid) + '-sina_oauth'
         nickname = data['name']
         head_oauth_avatar = data['avatar_hd']
@@ -155,9 +157,8 @@ class TencentOauthView(RedirectView):
             'redirect_uri': res.get('CALL_BACK'),
         }
         data = urllib.urlencode(data)
-        req = urllib2.Request(url, data, headers={'Accept': 'application/json'})
-        response = urllib2.urlopen(req)
-        tmp = response.read()
+        res = requests.post(url, data, headers={'Accept': 'application/json'})
+        tmp = res.content
         result = {}
         tmp = tmp.split("&")[0]
         result['access_token'] = tmp.split("=")[1]
@@ -169,19 +170,17 @@ class TencentOauthView(RedirectView):
     def get_openid(self, access_token):
         # 获取openid
         url = 'https://graph.qq.com/oauth2.0/me?access_token=%s' % access_token
-        response = urllib2.urlopen(url)
-        html = response.read()
+        res = requests.get(url)
         # 正则匹配json数据部分
-        html = re.search("\{.*\}", html).group()
+        html = re.search('\{.*\}', res.content).group()
         result = json.loads(html)
         return result
 
     def get_user_info(self, access_token, oauth_consumer_key, openid):
         # 获取用户信息
         url = 'https://graph.qq.com/user/get_user_info?access_token=%s&oauth_consumer_key=%s&openid=%s' % (access_token, oauth_consumer_key, openid)
-        response = urllib2.urlopen(url)
-        html = response.read()
-        data = json.loads(html)
+        res = requests.get(url)
+        data = json.loads(res.content)
         username = str(openid) + '-qq_oauth'
         nickname = data['nickname']
         head_oauth_avatar = data['figureurl']
