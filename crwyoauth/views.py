@@ -154,7 +154,8 @@ class TencentOauthView(RedirectView):
             'code': code,
             'redirect_uri': res.get('CALL_BACK'),
         }
-        res = requests.post(url, data)
+        url = url + '?' + urllib.urlencode(data)
+        res = requests.get(url)
         tmp = res.content
         result = {}
         tmp = tmp.split("&")[0]
