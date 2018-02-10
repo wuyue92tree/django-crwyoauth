@@ -26,9 +26,9 @@ django oauth 2.0 实现。
     pip install django-crwyoauth
 
 or
-前往下载: https://pypi.python.org/pypi/django-crwyoauth/1.0.0/
+前往下载: https://pypi.python.org/pypi/django-crwyoauth/1.0.2/
 
 使用手册
 ===================
-在这里: http://django-crwyoauth.readthedocs.io/zh_CN/1.0.0/
+在这里: http://django-crwyoauth.readthedocs.io/zh_CN/1.0.2/
 
