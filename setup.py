@@ -27,5 +27,5 @@ setup(
     install_requires=[
         'Django >= 1.10.3',
         'django-braces >= 1.9.0',
-        'requests==2.18.4'
+        'requests==2.20.0'
     ], )
